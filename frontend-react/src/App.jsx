@@ -1,124 +1,88 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+// import { BrowserRouter, Routes, Route } from 'react-router-dom'
+// import { AuthProvider } from './context/AuthContext'
+// import { CartProvider } from './context/CartContext'
+
+// import Navbar         from './components/Navbar'
+// import Footer         from './components/Footer'
+// import ProtectedRoute from './components/ProtectedRoute'
+
+// import Home          from './pages/Home'
+// import Products      from './pages/Products'
+// import ProductDetail from './pages/ProductDetail'
+// import Login         from './pages/Login'
+// import Register      from './pages/Register'
+// import Cart          from './pages/Cart'
+// import Checkout      from './pages/Checkout'
+// import Orders        from './pages/Orders'
+// import NotFound      from './pages/NotFound'
+
+// // Layout wrapper for pages that need Navbar + Footer
+// const Layout = ({ children }) => (
+//   <>
+//     <Navbar />
+//     <main className="min-h-screen pt-16">
+//       {children}
+//     </main>
+//     <Footer />
+//   </>
+// )
+
+// // Fullscreen layout for auth pages (no Navbar/Footer)
+// const AuthLayout = ({ children }) => (
+//   <main>{children}</main>
+// )
+
+// const App = () => {
+//   return (
+//     <BrowserRouter>
+//       <AuthProvider>
+//         <CartProvider>
+//           <Routes>
+//             {/* ── Public routes with layout ── */}
+//             <Route path="/" element={<Layout><Home /></Layout>} />
+//             <Route path="/products" element={<Layout><Products /></Layout>} />
+//             <Route path="/products/:id" element={<Layout><ProductDetail /></Layout>} />
+//             <Route path="/cart" element={<Layout><Cart /></Layout>} />
+
+//             {/* ── Auth routes (fullscreen) ── */}
+//             <Route path="/login"    element={<AuthLayout><Login /></AuthLayout>} />
+//             <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
+
+//             {/* ── Protected routes ── */}
+//             <Route
+//               path="/checkout"
+//               element={
+//                 <ProtectedRoute>
+//                   <Layout><Checkout /></Layout>
+//                 </ProtectedRoute>
+//               }
+//             />
+//             <Route
+//               path="/orders"
+//               element={
+//                 <ProtectedRoute>
+//                   <Layout><Orders /></Layout>
+//                 </ProtectedRoute>
+//               }
+//             />
+
+//             {/* ── 404 ── */}
+//             <Route path="*" element={<Layout><NotFound /></Layout>} />
+//           </Routes>
+//         </CartProvider>
+//       </AuthProvider>
+//     </BrowserRouter>
+//   )
+// }
+
+// export default App
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="text-center text-3xl font-bold text-blue-600 mt-10">
-      Frontend E-Commerce UTS Berhasil
-      </div>
-      <section id="spacer"></section>
-    </>
-  )
+    <div className="text-center text-4xl font-bold mt-10">
+      LUXE E-Commerce Frontend
+    </div>
+  );
 }
 
-export default App
+export default App;
