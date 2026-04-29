@@ -78,7 +78,7 @@ const ProductDetail = () => {
         <div className="space-y-4">
           <div className="aspect-square bg-stone-100 overflow-hidden relative">
             <img
-              src={product.image || `https://picsum.photos/seed/${product.id}/600/600`}
+              src={product.image_url || `https://picsum.photos/seed/${product.id}/600/600`}
               alt={product.name}
               className="w-full h-full object-cover"
             />
@@ -96,7 +96,9 @@ const ProductDetail = () => {
         {/* Info */}
         <div className="space-y-6">
           {product.category && (
-            <p className="font-body text-xs font-semibold tracking-widest text-amber-600 uppercase">{product.category}</p>
+            <p className="font-body text-xs font-semibold tracking-widest text-amber-600 uppercase">
+              {typeof product.category === 'object' ? product.category.name : product.category}
+            </p>
           )}
           <h1 className="font-display text-3xl lg:text-4xl font-semibold text-stone-900 leading-tight">{product.name}</h1>
 

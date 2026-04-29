@@ -18,7 +18,7 @@ const ProductCard = ({ product }) => {
         {/* Image */}
         <div className="relative aspect-[4/3] bg-stone-100 overflow-hidden">
           <img
-            src={product.image || `https://picsum.photos/seed/${product.id}/400/300`}
+            src={product.image_url || `https://picsum.photos/seed/${product.id}/400/300`}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
@@ -54,7 +54,7 @@ const ProductCard = ({ product }) => {
             <div className="min-w-0">
               {product.category && (
                 <p className="font-body text-[11px] font-medium tracking-widest text-stone-400 uppercase mb-1">
-                  {product.category}
+                  {typeof product.category === 'object' ? product.category.name : product.category}
                 </p>
               )}
               <h3 className="font-body text-sm font-medium text-stone-900 leading-snug truncate group-hover:text-stone-700 transition-colors">

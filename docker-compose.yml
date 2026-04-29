@@ -1,0 +1,112 @@
+services:
+  # Databases
+  db-user:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: user_service_db
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - "3306:3306"
+    volumes:
+      - user-db-data:/var/lib/mysql
+
+  db-product:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: product_service_db
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - "3307:3306"
+    volumes:
+      - product-db-data:/var/lib/mysql
+
+  db-order:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: service_order
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+
+  # Services
+  service-user:
+    build: ./service-user-laravel
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./service-user-laravel:/app
+      - /app/vendor
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db-user
+      DB_PORT: 3306
+      DB_DATABASE: user_service_db
+      DB_USERNAME: root
+      DB_PASSWORD: ''
+      ORDER_SERVICE_URL: http://service-order:5000
+    depends_on:
+      - db-user
+    restart: always
+
+  service-product:
+    build: ./service-product-laravel
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./service-product-laravel:/app
+      - /app/vendor
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db-product
+      DB_PORT: 3306
+      DB_DATABASE: product_service_db
+      DB_USERNAME: root
+      DB_PASSWORD: ''
+      USER_SERVICE_URL: http://service-user:8000/api
+    depends_on:
+      - db-product
+    restart: always
+
+  service-order:
+    build: ./service-order-node
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./service-order-node:/app
+      - /app/node_modules
+    environment:
+      PORT: 5000
+      DB_HOST: db-order
+      DB_PORT: 5432
+      DB_NAME: service_order
+      DB_USER: postgres
+      DB_PASSWORD: password
+      USER_SERVICE_URL: http://service-user:8000
+      PRODUCT_SERVICE_URL: http://service-product:8001
+    depends_on:
+      - db-order
+    restart: always
+
+  frontend:
+    build: ./frontend-react
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend-react:/app
+      - /app/node_modules
+    environment:
+      VITE_USER_SERVICE_URL: http://localhost:8000/api
+      VITE_PRODUCT_SERVICE_URL: http://localhost:8001/api
+      VITE_ORDER_SERVICE_URL: http://localhost:5000/api
+    depends_on:
+      - service-user
+      - service-product
+      - service-order
+
+volumes:
+  user-db-data:
+  product-db-data:
+  order-db-data:

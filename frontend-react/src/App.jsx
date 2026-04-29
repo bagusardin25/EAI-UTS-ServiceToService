@@ -1,20 +1,20 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { AuthProvider } from './Context/AuthContext'
-import { CartProvider } from './Context/CartContext'
+import { AuthProvider } from './context/AuthContext'
+import { CartProvider } from './context/CartContext'
 
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 
-import Home from './Pages/Home'
-import Products from './Pages/Products'
-import ProductDetail from './Pages/ProductDetail'
-import Login from './Pages/Login'
-import Register from './Pages/Register'
-import Cart from './Pages/Cart'
-import Checkout from './Pages/Checkout'
-import Orders from './Pages/Orders'
-import NotFound from './Pages/NotFound'
+import Home from './pages/Home'
+import Products from './pages/Products'
+import ProductDetail from './pages/ProductDetail'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Cart from './pages/Cart'
+import Checkout from './pages/Checkout'
+import Orders from './pages/Orders'
+import NotFound from './pages/NotFound'
 
 const Layout = ({ children }) => (
   <>

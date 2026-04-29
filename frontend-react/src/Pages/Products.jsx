@@ -46,7 +46,14 @@ const Products = () => {
   // Fetch categories
   useEffect(() => {
     productService.getCategories()
-      .then(res => setCategories(res.data || MOCK_CATEGORIES))
+      .then(res => {
+        const data = res.data?.data || res.data
+        if (Array.isArray(data)) {
+          setCategories(data.map(c => typeof c === 'object' ? c.name : c))
+        } else {
+          setCategories(MOCK_CATEGORIES)
+        }
+      })
       .catch(() => setCategories(MOCK_CATEGORIES))
   }, [])
 
@@ -62,7 +69,9 @@ const Products = () => {
       if (priceRange.max) params.max_price = priceRange.max
 
       const res = await productService.getAll(params)
-      setProducts(res.data?.data || res.data || [])
+      // Handle Laravel paginated response: res.data.data.data
+      const productsArray = res.data?.data?.data || res.data?.data || []
+      setProducts(Array.isArray(productsArray) ? productsArray : [])
     } catch {
       // Filter mock products client-side for demo
       let filtered = [...MOCK_PRODUCTS]

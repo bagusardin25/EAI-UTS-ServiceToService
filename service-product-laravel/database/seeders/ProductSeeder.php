@@ -45,24 +45,28 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($data as $item) {
-            $category = Category::create([
-                'name' => $item['category'],
-                'slug' => Str::slug($item['category']),
-                'description' => $item['description'],
-            ]);
+            $category = Category::firstOrCreate(
+                ['slug' => Str::slug($item['category'])],
+                [
+                    'name' => $item['category'],
+                    'description' => $item['description'],
+                ]
+            );
 
             foreach ($item['products'] as $prod) {
-                Product::create([
-                    'category_id' => $category->id,
-                    'name' => $prod['name'],
-                    'slug' => Str::slug($prod['name']),
-                    'description' => "Nikmati kualitas terbaik dari " . $prod['name'] . ". Cocok untuk penggunaan sehari-hari dan menjamin kepuasan Anda.",
-                    'price' => $prod['price'],
-                    'stock' => $prod['stock'],
-                    'sku' => strtoupper(Str::random(3)) . '-' . rand(1000, 9999),
-                    'image_url' => 'https://picsum.photos/400/400?random=' . rand(1, 1000),
-                    'is_active' => true,
-                ]);
+                Product::firstOrCreate(
+                    ['slug' => Str::slug($prod['name'])],
+                    [
+                        'category_id' => $category->id,
+                        'name' => $prod['name'],
+                        'description' => "Nikmati kualitas terbaik dari " . $prod['name'] . ". Cocok untuk penggunaan sehari-hari dan menjamin kepuasan Anda.",
+                        'price' => $prod['price'],
+                        'stock' => $prod['stock'],
+                        'sku' => strtoupper(Str::random(3)) . '-' . rand(1000, 9999),
+                        'image_url' => 'https://picsum.photos/400/400?random=' . rand(1, 1000),
+                        'is_active' => true,
+                    ]
+                );
             }
         }
 

@@ -28,7 +28,9 @@ const Home = () => {
     const fetchFeatured = async () => {
       try {
         const res = await productService.getAll({ limit: 8, featured: true })
-        setFeatured(res.data?.data || res.data || [])
+        // Handle Laravel paginated response: res.data.data.data
+        const productsArray = res.data?.data?.data || res.data?.data || []
+        setFeatured(Array.isArray(productsArray) ? productsArray : [])
       } catch {
         // Use mock products for demo / when service is down
         setFeatured(MOCK_PRODUCTS)
