@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { ShoppingBag, Star, Eye } from 'lucide-react'
-import { useCart } from '../context/CartContext'
+import { useCart } from '../Context/CartContext'
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, index = 0 }) => {
   const { addItem, isInCart } = useCart()
   const inCart = isInCart(product.id)
 
@@ -13,7 +13,7 @@ const ProductCard = ({ product }) => {
   }
 
   return (
-    <Link to={`/products/${product.id}`} className="group block">
+    <Link to={`/products/${product.id}`} className="group block reveal-up" style={{ animationDelay: `${Math.min(index * 45, 360)}ms` }}>
       <div className="card overflow-hidden">
         {/* Image */}
         <div className="relative aspect-[4/3] bg-stone-100 overflow-hidden">
@@ -49,7 +49,7 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Info */}
-        <div className="p-4">
+          <div className="p-4 sm:p-5">
           <div className="flex items-start justify-between gap-2 mb-1">
             <div className="min-w-0">
               {product.category && (
@@ -57,7 +57,7 @@ const ProductCard = ({ product }) => {
                   {product.category}
                 </p>
               )}
-              <h3 className="font-body text-sm font-medium text-stone-900 leading-snug truncate group-hover:text-stone-700 transition-colors">
+              <h3 className="font-body text-sm sm:text-[15px] font-semibold text-stone-900 leading-snug line-clamp-2 group-hover:text-stone-700 transition-colors">
                 {product.name}
               </h3>
             </div>
@@ -81,7 +81,7 @@ const ProductCard = ({ product }) => {
 
           <div className="flex items-center justify-between gap-3 mt-3">
             <div>
-              <p className="font-display text-base font-semibold text-stone-900">
+              <p className="font-display text-base sm:text-lg font-semibold text-stone-900">
                 Rp {Number(product.price).toLocaleString('id-ID')}
               </p>
               {product.original_price && product.original_price > product.price && (
@@ -94,7 +94,7 @@ const ProductCard = ({ product }) => {
             <button
               onClick={handleAddToCart}
               disabled={product.stock === 0}
-              className={`p-2.5 transition-all duration-200 ${
+              className={`p-2.5 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 ${
                 inCart
                   ? 'bg-stone-800 text-white'
                   : 'border border-stone-300 text-stone-600 hover:bg-stone-800 hover:text-white hover:border-stone-800'

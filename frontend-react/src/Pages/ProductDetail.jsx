@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ShoppingBag, Star, ArrowLeft, Plus, Minus, Check, Truck, Shield } from 'lucide-react'
 import { productService } from '../services/api'
-import { useCart } from '../context/CartContext'
+import { useCart } from '../Context/CartContext'
 import Loader from '../components/Loader'
 
 const MOCK_PRODUCTS = {

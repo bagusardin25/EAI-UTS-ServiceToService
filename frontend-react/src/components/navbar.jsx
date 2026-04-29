@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { ShoppingBag, User, LogOut, Menu, X, Search, Package } from 'lucide-react'
-import { useAuth } from '../context/AuthContext'
-import { useCart } from '../context/CartContext'
+import { useAuth } from '../Context/AuthContext'
+import { useCart } from '../Context/CartContext'
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth()
@@ -33,7 +33,7 @@ const Navbar = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        scrolled ? 'bg-white/95 backdrop-blur-md shadow-elegant' : 'bg-white border-b border-stone-100'
+        scrolled ? 'bg-white/90 backdrop-blur-xl shadow-elegant' : 'bg-white/80 backdrop-blur-md border-b border-stone-100'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,7 +41,7 @@ const Navbar = () => {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-stone-800 flex items-center justify-center">
+            <div className="w-8 h-8 bg-stone-900 flex items-center justify-center shadow-card transition-transform duration-300 group-hover:rotate-6">
               <span className="text-white text-xs font-display font-bold">L</span>
             </div>
             <span className="font-display text-xl font-semibold text-stone-900 tracking-tight">LUXE</span>
@@ -129,7 +129,7 @@ const Navbar = () => {
             ) : (
               <Link
                 to="/login"
-                className="hidden md:flex items-center gap-2 bg-stone-800 text-white px-4 py-2 text-sm font-body font-medium tracking-wide hover:bg-stone-900 transition-colors duration-200"
+              className="hidden md:flex items-center gap-2 bg-stone-900 text-white px-4 py-2 text-sm font-body font-medium tracking-wide shadow-card hover:-translate-y-0.5 hover:bg-stone-800 hover:shadow-lifted transition-all duration-200"
               >
                 <User size={14} /> Sign In
               </Link>
