@@ -82,7 +82,7 @@ class UserController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        $orderServiceUrl = env('ORDER_SERVICE_URL', 'http://localhost:8003');
+        $orderServiceUrl = env('ORDER_SERVICE_URL', 'http://localhost:8002');
 
         try {
             $response = Http::timeout(5)->get("{$orderServiceUrl}/api/orders/user/{$id}");
