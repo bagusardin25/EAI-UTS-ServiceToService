@@ -84,10 +84,9 @@ exports.create = async (req, res) => {
     }
 };
 
-// [PROVIDER] - Ambil semua order
+// [BUYER] - Ambil semua order milik user yang sedang login
 exports.getAll = async (req, res) => {
     try {
-        // Hanya tampilkan order milik user yang sedang login
         const orders = await Order.findAll({ 
             where: { user_id: req.user.id },
             include: 'items', 
@@ -99,7 +98,20 @@ exports.getAll = async (req, res) => {
     }
 };
 
-// [PROVIDER] - Ambil order berdasarkan ID
+// [ADMIN] - Ambil SEMUA order dari semua user (tanpa filter user_id)
+exports.getAllAdmin = async (req, res) => {
+    try {
+        const orders = await Order.findAll({ 
+            include: 'items', 
+            order: [['created_at', 'DESC']] 
+        });
+        res.status(200).json({ message: 'Berhasil mengambil semua order (admin)', data: orders });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// [BUYER] - Ambil order berdasarkan ID (hanya milik sendiri)
 exports.getById = async (req, res) => {
     try {
         const order = await Order.findByPk(req.params.id, { include: 'items' });
@@ -107,7 +119,7 @@ exports.getById = async (req, res) => {
             return res.status(404).json({ message: 'Order tidak ditemukan' });
         }
         // Pastikan order ini milik user yang sedang login
-        // Gunakan toString() atau Number() karena database Sequelize pg mengembalikan BIGINT sebagai string
+        // Gunakan Number() karena database Sequelize pg mengembalikan BIGINT sebagai string
         if (Number(order.user_id) !== Number(req.user.id)) {
             return res.status(403).json({ message: 'Anda tidak memiliki akses ke order ini' });
         }
@@ -117,7 +129,7 @@ exports.getById = async (req, res) => {
     }
 };
 
-// [PROVIDER] - Ambil order berdasarkan user_id (untuk dikonsumsi UserService)
+// [ADMIN/PROVIDER] - Ambil order berdasarkan user_id (untuk dikonsumsi UserService)
 exports.getByUserId = async (req, res) => {
     try {
         const orders = await Order.findAll({
@@ -131,7 +143,7 @@ exports.getByUserId = async (req, res) => {
     }
 };
 
-// Update status order
+// [ADMIN] - Update status order
 exports.updateStatus = async (req, res) => {
     try {
         const { status } = req.body;
@@ -153,6 +165,38 @@ exports.updateStatus = async (req, res) => {
 
         res.status(200).json({
             message: 'Status order berhasil diupdate',
+            data: { id: order.id, order_number: order.order_number, status: order.status },
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// [BUYER] - Cancel order sendiri (hanya jika masih pending)
+exports.cancelOrder = async (req, res) => {
+    try {
+        const order = await Order.findByPk(req.params.id);
+        if (!order) {
+            return res.status(404).json({ message: 'Order tidak ditemukan' });
+        }
+
+        // Pastikan order milik user yang sedang login
+        if (Number(order.user_id) !== Number(req.user.id)) {
+            return res.status(403).json({ message: 'Anda tidak memiliki akses ke order ini' });
+        }
+
+        // Hanya bisa cancel jika masih pending
+        if (order.status !== 'pending') {
+            return res.status(400).json({ 
+                message: `Order tidak dapat dibatalkan karena statusnya sudah '${order.status}'. Hanya order dengan status 'pending' yang bisa dibatalkan.` 
+            });
+        }
+
+        order.status = 'cancelled';
+        await order.save();
+
+        res.status(200).json({
+            message: 'Order berhasil dibatalkan',
             data: { id: order.id, order_number: order.order_number, status: order.status },
         });
     } catch (error) {

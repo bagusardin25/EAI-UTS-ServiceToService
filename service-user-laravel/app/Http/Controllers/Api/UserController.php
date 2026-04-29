@@ -19,7 +19,7 @@ class UserController extends Controller
     {
         $user = $request->user();
 
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return response()->json(['status' => 'error', 'message' => 'Unauthenticated.'], 401);
         }
 
@@ -33,7 +33,7 @@ class UserController extends Controller
     {
         $user = $request->user();
 
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return response()->json(['status' => 'error', 'message' => 'Unauthenticated.'], 401);
         }
 
@@ -118,9 +118,15 @@ class UserController extends Controller
         $orderServiceUrl = rtrim((string) env('ORDER_SERVICE_URL', 'http://localhost:8002/api'), '/');
 
         try {
-            $response = Http::timeout(5)->get($orderServiceUrl.'/orders', [
-                'user_id' => $userId,
-            ]);
+            // Ambil token dari request saat ini untuk diteruskan ke Order Service
+            $token = request()->bearerToken();
+
+            $response = Http::timeout(5)
+                ->withHeaders([
+                    'Authorization' => 'Bearer ' . $token,
+                    'Accept' => 'application/json',
+                ])
+                ->get($orderServiceUrl . '/orders/user/' . $userId);
 
             return response()->json([
                 'user' => $user->name,
@@ -136,7 +142,7 @@ class UserController extends Controller
      */
     private function hashPasswordWhenFilled(array &$data): void
     {
-        if (! empty($data['password'])) {
+        if (!empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
 
             return;

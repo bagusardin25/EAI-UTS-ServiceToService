@@ -25,10 +25,10 @@ class UserSeeder extends Seeder
         UserAddress::updateOrCreate(
             ['user_id' => $admin->id, 'label' => 'Kantor'],
             [
-                'street' => fake()->streetAddress(),
-                'city' => fake()->city(),
-                'province' => fake()->state(),
-                'postal_code' => fake()->postcode(),
+                'street' => 'Jl. Sudirman No. 1',
+                'city' => 'Jakarta Pusat',
+                'province' => 'DKI Jakarta',
+                'postal_code' => '10210',
                 'is_primary' => true,
             ]
         );
@@ -49,27 +49,12 @@ class UserSeeder extends Seeder
         UserAddress::updateOrCreate(
             ['user_id' => $testUser->id, 'label' => 'Rumah'],
             [
-                'street' => fake()->streetAddress(),
-                'city' => fake()->city(),
-                'province' => fake()->state(),
-                'postal_code' => fake()->postcode(),
+                'street' => 'Jl. Asia Afrika No. 65',
+                'city' => 'Bandung',
+                'province' => 'Jawa Barat',
+                'postal_code' => '40111',
                 'is_primary' => true,
             ]
         );
-
-        // Generate 10 users using Factory
-        User::factory()->count(10)->create()->each(function ($user) {
-            // For each user, create 1 primary address
-            UserAddress::updateOrCreate(
-                ['user_id' => $user->id, 'label' => 'Rumah'],
-                [
-                    'street' => fake()->streetAddress(),
-                    'city' => fake()->city(),
-                    'province' => fake()->state(),
-                    'postal_code' => fake()->postcode(),
-                    'is_primary' => true,
-                ]
-            );
-        });
     }
 }
