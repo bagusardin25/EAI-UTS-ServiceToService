@@ -12,4 +12,6 @@ const db = new Sequelize(
         logging: false,
     }
 );
+db.authenticate().then(() => console.log("Database Terkoneksi")).catch((err) => console.log("Database Gagal Terkoneksi", err))
+
 module.exports = db;
