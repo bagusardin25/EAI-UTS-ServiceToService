@@ -1,0 +1,152 @@
+services:
+  # ============================================================
+  # DATABASE SERVICES
+  # ============================================================
+
+  mysql:
+    image: mysql:8.0
+    container_name: eai-mysql
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: db_user_service
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-mysql.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-proot_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: eai-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: bagus123
+      POSTGRES_DB: db_order_service
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  # ============================================================
+  # BACKEND SERVICES
+  # ============================================================
+
+  service-user:
+    build:
+      context: ./service-user-laravel
+      dockerfile: Dockerfile
+    container_name: eai-service-user
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: db_user_service
+      DB_USERNAME: root
+      DB_PASSWORD: root_password
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - microservices-net
+
+  service-product:
+    build:
+      context: ./service-product-laravel
+      dockerfile: Dockerfile
+    container_name: eai-service-product
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: db_product_service
+      DB_USERNAME: root
+      DB_PASSWORD: root_password
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - microservices-net
+
+  service-order:
+    build:
+      context: ./service-order-node
+      dockerfile: Dockerfile
+    container_name: eai-service-order
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: db_order_service
+      DB_USER: postgres
+      DB_PASSWORD: bagus123
+      PORT: 8002
+      USER_SERVICE_URL: http://service-user:8000
+      PRODUCT_SERVICE_URL: http://service-product:8001
+    depends_on:
+      postgres:
+        condition: service_healthy
+      service-user:
+        condition: service_started
+      service-product:
+        condition: service_started
+    networks:
+      - microservices-net
+
+  # ============================================================
+  # FRONTEND
+  # ============================================================
+
+  frontend:
+    build:
+      context: ./frontend-react
+      dockerfile: Dockerfile
+    container_name: eai-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - service-user
+      - service-product
+      - service-order
+    networks:
+      - microservices-net
+
+# ============================================================
+# NETWORKS & VOLUMES
+# ============================================================
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+  postgres_data:
+    driver: local
