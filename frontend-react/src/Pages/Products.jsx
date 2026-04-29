@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react'
 import { productService } from '../services/api'
@@ -13,99 +13,168 @@ const SORT_OPTIONS = [
 ]
 
 const MOCK_PRODUCTS = [
-  { id: 1,  name: 'Wireless Noise-Cancelling Headphones', price: 2499000,  category: 'Electronics', stock: 10, rating: 4.8, review_count: 234, is_new: true  },
-  { id: 2,  name: 'Premium Leather Sneakers',             price: 1299000,  category: 'Fashion',     stock: 5,  rating: 4.6, review_count: 89,  discount: 15  },
-  { id: 3,  name: 'Minimalist Desk Lamp',                 price: 349000,   category: 'Home',        stock: 20, rating: 4.5, review_count: 56  },
-  { id: 4,  name: 'Smart Fitness Watch',                  price: 3199000,  category: 'Electronics', stock: 8,  rating: 4.7, review_count: 312, is_new: true  },
-  { id: 5,  name: 'Linen Button-Down Shirt',              price: 459000,   category: 'Fashion',     stock: 15, rating: 4.4, review_count: 67  },
-  { id: 6,  name: 'Ceramic Pour-Over Coffee Set',         price: 289000,   category: 'Home',        stock: 30, rating: 4.9, review_count: 145 },
-  { id: 7,  name: 'Yoga Mat Pro',                        price: 399000,   category: 'Sports',      stock: 12, rating: 4.6, review_count: 78  },
-  { id: 8,  name: 'Mechanical Keyboard TKL',              price: 1850000,  category: 'Electronics', stock: 6,  rating: 4.8, review_count: 198, discount: 10  },
-  { id: 9,  name: 'Tote Canvas Bag',                     price: 199000,   category: 'Fashion',     stock: 25, rating: 4.3, review_count: 42  },
-  { id: 10, name: 'Standing Desk Mat',                   price: 279000,   category: 'Home',        stock: 18, rating: 4.5, review_count: 63  },
-  { id: 11, name: 'Running Shoes Ultra',                 price: 1199000,  category: 'Sports',      stock: 9,  rating: 4.7, review_count: 156 },
-  { id: 12, name: 'USB-C Hub 7-in-1',                   price: 599000,   category: 'Electronics', stock: 22, rating: 4.6, review_count: 88  },
+  { id: 1,  name: 'Smartphone Samsung Galaxy S24',      price: 15000000, category: 'Elektronik',        stock: 10, rating: 4.8, review_count: 234, is_new: true  },
+  { id: 2,  name: 'Laptop ASUS ROG Zephyrus',           price: 25000000, category: 'Elektronik',        stock: 5,  rating: 4.6, review_count: 89,  discount: 15  },
+  { id: 3,  name: 'Sony Noise Cancelling Headphones',   price: 4500000,  category: 'Elektronik',        stock: 20, rating: 4.5, review_count: 56  },
+  { id: 4,  name: 'Kemeja Flanel Kotak-kotak',          price: 250000,    category: 'Pakaian Pria',      stock: 8,  rating: 4.7, review_count: 312, is_new: true  },
+  { id: 5,  name: 'Celana Chino Slim Fit',              price: 350000,    category: 'Pakaian Pria',      stock: 15, rating: 4.4, review_count: 67  },
+  { id: 6,  name: 'Jaket Bomber Navy',                  price: 500000,    category: 'Pakaian Pria',      stock: 30, rating: 4.9, review_count: 145 },
+  { id: 7,  name: 'Kopi Arabika Gayo 250g',             price: 85000,     category: 'Makanan & Minuman', stock: 12, rating: 4.6, review_count: 78  },
+  { id: 8,  name: 'Cokelat Batangan Premium',           price: 45000,     category: 'Makanan & Minuman', stock: 6,  rating: 4.8, review_count: 198, discount: 10  },
+  { id: 9,  name: 'Teh Hijau Jepang Matcha',            price: 120000,    category: 'Makanan & Minuman', stock: 25, rating: 4.3, review_count: 42  },
 ]
 
-const MOCK_CATEGORIES = ['Electronics', 'Fashion', 'Home', 'Sports']
+const MOCK_CATEGORIES = [
+  { name: 'Elektronik', products_count: 3 },
+  { name: 'Pakaian Pria', products_count: 3 },
+  { name: 'Makanan & Minuman', products_count: 3 },
+]
+
+const normalizeCategoryName = (category) => {
+  if (!category) return ''
+  if (typeof category === 'string') return category
+  return category.name || category.slug || ''
+}
+
+const getCategoryCount = (category) => {
+  if (!category || typeof category !== 'object') return 0
+  return category.products_count ?? category.count ?? 0
+}
+
+const matchesSearch = (product, query) => {
+  const needle = query.trim().toLowerCase()
+  if (!needle) return true
+
+  const haystack = [
+    product.name,
+    product.description,
+    product.sku,
+    normalizeCategoryName(product.category),
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+
+  return haystack.includes(needle)
+}
+
+const sortProducts = (items, sort) => {
+  const next = [...items]
+
+  switch (sort) {
+    case 'price_asc':
+      return next.sort((a, b) => Number(a.price || 0) - Number(b.price || 0))
+    case 'price_desc':
+      return next.sort((a, b) => Number(b.price || 0) - Number(a.price || 0))
+    case 'rating':
+      return next.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0))
+    case 'newest':
+    default:
+      return next
+  }
+}
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const [products,    setProducts]    = useState([])
-  const [categories,  setCategories]  = useState([])
-  const [loading,     setLoading]     = useState(true)
-  const [filterOpen,  setFilterOpen]  = useState(false)
+  const [allProducts, setAllProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [filterOpen, setFilterOpen] = useState(false)
 
-  const [search,       setSearch]      = useState(searchParams.get('q') || '')
-  const [activeSearch, setActiveSearch] = useState(searchParams.get('q') || '')
-  const [category,     setCategory]    = useState(searchParams.get('category') || '')
-  const [sort,         setSort]        = useState('newest')
-  const [priceRange,   setPriceRange]  = useState({ min: '', max: '' })
+  const [search, setSearch] = useState(searchParams.get('q') || '')
+  const [category, setCategory] = useState(searchParams.get('category') || '')
+  const [sort, setSort] = useState('newest')
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' })
+
+  useEffect(() => {
+    setSearch(searchParams.get('q') || '')
+    setCategory(searchParams.get('category') || '')
+  }, [searchParams])
 
   // Fetch categories
   useEffect(() => {
     productService.getCategories()
       .then(res => {
         const cats = res.data?.data || res.data || []
-        // API returns objects {id, name, ...}, extract names for filter
-        const catNames = Array.isArray(cats)
-          ? cats.map(c => (typeof c === 'string' ? c : c.name))
-          : MOCK_CATEGORIES
-        setCategories(catNames)
+        // API returns objects {id, name, products_count, ...}
+        const normalized = Array.isArray(cats)
+          ? cats.map((c) => ({
+              name: normalizeCategoryName(c),
+              products_count: getCategoryCount(c),
+            })).filter((c) => c.name)
+          : []
+        setCategories(normalized.length > 0 ? normalized : MOCK_CATEGORIES)
       })
       .catch(() => setCategories(MOCK_CATEGORIES))
   }, [])
 
-  // Fetch products
+  // Fetch products once, then filter locally so search/category works in the UI
   const fetchProducts = useCallback(async () => {
     setLoading(true)
     try {
-      const params = {}
-      if (activeSearch) params.q        = activeSearch
-      if (category)     params.category = category
-      if (sort)         params.sort     = sort
-      if (priceRange.min) params.min_price = priceRange.min
-      if (priceRange.max) params.max_price = priceRange.max
-
-      const res = await productService.getAll(params)
+      const res = await productService.getAll()
       // Handle paginated response: res.data = {status, data: {data: [...], per_page, ...}}
       // or non-paginated: res.data = {status, data: [...]}
       const payload = res.data?.data
       const items = Array.isArray(payload) ? payload : (payload?.data || [])
-      setProducts(items)
+      setAllProducts(items)
     } catch {
-      // Filter mock products client-side for demo
-      let filtered = [...MOCK_PRODUCTS]
-      if (activeSearch) filtered = filtered.filter(p => p.name.toLowerCase().includes(activeSearch.toLowerCase()))
-      if (category)     filtered = filtered.filter(p => p.category === category)
-      setProducts(filtered)
+      setAllProducts(MOCK_PRODUCTS)
     } finally {
       setLoading(false)
     }
-  }, [activeSearch, category, sort, priceRange])
+  }, [])
 
   useEffect(() => { fetchProducts() }, [fetchProducts])
 
-  const handleSearch = (e) => {
-    e.preventDefault()
-    setActiveSearch(search)
+  const filteredProducts = useMemo(() => {
+    const selectedCategory = category.trim().toLowerCase()
+    const minPrice = priceRange.min === '' ? null : Number(priceRange.min)
+    const maxPrice = priceRange.max === '' ? null : Number(priceRange.max)
+
+    const filtered = allProducts.filter((product) => {
+      const productCategory = normalizeCategoryName(product.category).toLowerCase()
+      const price = Number(product.price || 0)
+
+      if (selectedCategory && productCategory !== selectedCategory) return false
+      if (!matchesSearch(product, search)) return false
+      if (minPrice !== null && price < minPrice) return false
+      if (maxPrice !== null && price > maxPrice) return false
+      return true
+    })
+
+    return sortProducts(filtered, sort)
+  }, [allProducts, search, category, priceRange.min, priceRange.max, sort])
+
+  const syncUrl = (nextSearch, nextCategory) => {
     setSearchParams(prev => {
       const next = new URLSearchParams(prev)
-      search ? next.set('q', search) : next.delete('q')
+      nextSearch ? next.set('q', nextSearch) : next.delete('q')
+      nextCategory ? next.set('category', nextCategory) : next.delete('category')
       return next
     })
   }
 
+  const handleSearch = (e) => {
+    e.preventDefault()
+    syncUrl(search, category)
+  }
+
+  const handleCategoryChange = (nextCategory) => {
+    setCategory(nextCategory)
+    syncUrl(search, nextCategory)
+  }
+
   const clearFilters = () => {
     setSearch('')
-    setActiveSearch('')
     setCategory('')
     setPriceRange({ min: '', max: '' })
+    setSort('newest')
     setSearchParams({})
   }
 
-  const hasFilters = activeSearch || category || priceRange.min || priceRange.max
+  const hasFilters = search || category || priceRange.min || priceRange.max || sort !== 'newest'
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 animate-fade-in">
@@ -114,7 +183,7 @@ const Products = () => {
       <div className="mb-8">
         <h1 className="section-title mb-1">All Products</h1>
         <p className="font-body text-sm text-stone-400">
-          {loading ? 'Loading...' : `${products.length} products found`}
+          {loading ? 'Loading...' : `${filteredProducts.length} products found`}
           {hasFilters && (
             <button onClick={clearFilters} className="ml-3 text-amber-600 hover:text-amber-700 underline">
               Clear filters
@@ -135,7 +204,7 @@ const Products = () => {
             className="input-field pl-10 pr-10"
           />
           {search && (
-            <button type="button" onClick={() => { setSearch(''); setActiveSearch('') }}
+            <button type="button" onClick={() => { setSearch(''); syncUrl('', category) }}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700">
               <X size={14} />
             </button>
@@ -174,19 +243,22 @@ const Products = () => {
               <ul className="space-y-1">
                 <li>
                   <button
-                    onClick={() => setCategory('')}
+                    onClick={() => handleCategoryChange('')}
                     className={`w-full text-left text-sm font-body px-2 py-1.5 rounded-sm transition-colors ${!category ? 'text-stone-900 font-medium bg-stone-100' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-50'}`}
                   >
                     All Categories
                   </button>
                 </li>
                 {categories.map(cat => (
-                  <li key={cat}>
+                  <li key={cat.name}>
                     <button
-                      onClick={() => setCategory(cat)}
-                      className={`w-full text-left text-sm font-body px-2 py-1.5 rounded-sm transition-colors ${category === cat ? 'text-stone-900 font-medium bg-stone-100' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-50'}`}
+                      onClick={() => handleCategoryChange(cat.name)}
+                      className={`w-full text-left text-sm font-body px-2 py-1.5 rounded-sm transition-colors ${category.toLowerCase() === cat.name.toLowerCase() ? 'text-stone-900 font-medium bg-stone-100' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-50'}`}
                     >
-                      {cat}
+                      <span className="flex items-center justify-between gap-2">
+                        <span>{cat.name}</span>
+                        <span className="text-xs text-stone-400">{cat.products_count || 0}</span>
+                      </span>
                     </button>
                   </li>
                 ))}
@@ -225,14 +297,14 @@ const Products = () => {
         <div className="flex-1 min-w-0">
           {loading ? (
             <Loader text="Loading products..." />
-          ) : products.length === 0 ? (
+          ) : filteredProducts.length === 0 ? (
             <div className="text-center py-20">
               <p className="font-body text-stone-400 text-sm">No products found.</p>
               <button onClick={clearFilters} className="mt-4 btn-outline text-sm">Clear filters</button>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {products.map((p, idx) => <ProductCard key={p.id} product={p} index={idx} />)}
+              {filteredProducts.map((p, idx) => <ProductCard key={p.id} product={p} index={idx} />)}
             </div>
           )}
         </div>

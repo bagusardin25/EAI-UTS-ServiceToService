@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight,
+  Coffee,
   Dumbbell,
   Headphones,
   Laptop,
   RefreshCw,
   ShieldCheck,
   Shirt,
-  Sofa,
   Truck,
 } from 'lucide-react'
 import { productService } from '../services/api'
@@ -17,10 +17,10 @@ import Loader from '../components/Loader'
 import heroImage from '../assets/hero.png'
 
 const CATEGORIES = [
-  { name: 'Electronics', icon: Laptop, count: 120 },
-  { name: 'Fashion', icon: Shirt, count: 85 },
-  { name: 'Home & Living', icon: Sofa, count: 64 },
-  { name: 'Sports', icon: Dumbbell, count: 48 },
+  { name: 'Elektronik', icon: Laptop, count: 120 },
+  { name: 'Pakaian Pria', icon: Shirt, count: 85 },
+  { name: 'Makanan & Minuman', icon: Coffee, count: 64 },
+  { name: 'Olahraga', icon: Dumbbell, count: 48 },
 ]
 
 const FEATURES = [
