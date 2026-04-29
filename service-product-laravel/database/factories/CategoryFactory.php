@@ -17,11 +17,25 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
-        $name = $this->faker->unique()->words(2, true);
+        $categories = [
+            'Elektronik',
+            'Pakaian Pria',
+            'Pakaian Wanita',
+            'Peralatan Rumah Tangga',
+            'Kesehatan & Kecantikan',
+            'Hobi & Koleksi',
+            'Otomotif',
+            'Makanan & Minuman',
+            'Olahraga',
+            'Komputer & Aksesoris'
+        ];
+
+        $name = $this->faker->unique()->randomElement($categories);
+        
         return [
-            'name' => ucfirst($name),
+            'name' => $name,
             'slug' => Str::slug($name),
-            'description' => $this->faker->sentence(),
+            'description' => "Berbagai macam produk kategori " . $name . " berkualitas tinggi.",
         ];
     }
 }
