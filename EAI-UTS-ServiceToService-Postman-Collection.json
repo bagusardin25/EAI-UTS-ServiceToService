@@ -1,0 +1,351 @@
+{
+  "info": {
+    "name": "EAI-UTS-ServiceToService",
+    "description": "Postman collection for EAI UTS Project Microservices. Contains endpoints for User Service (8000), Product Service (8001), and Order Service (8002).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "User Service (Port 8000)",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{user_service}}/api/auth/register",
+              "host": ["{{user_service}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{user_service}}/api/auth/login",
+              "host": ["{{user_service}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{user_service}}/api/auth/profile",
+              "host": ["{{user_service}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User Updated\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{user_service}}/api/auth/profile",
+              "host": ["{{user_service}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{user_service}}/api/auth/logout",
+              "host": ["{{user_service}}"],
+              "path": ["api", "auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product Service (Port 8001)",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{product_service}}/api/products?page=1&limit=10",
+              "host": ["{{product_service}}"],
+              "path": ["api", "products"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "category", "value": "elektronik", "disabled": true },
+                { "key": "q", "value": "headphone", "disabled": true },
+                { "key": "sort", "value": "price_asc", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{product_service}}/api/products/1",
+              "host": ["{{product_service}}"],
+              "path": ["api", "products", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{product_service}}/api/categories",
+              "host": ["{{product_service}}"],
+              "path": ["api", "categories"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Order Service (Port 8002)",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"name\": \"Wireless Noise-Cancelling Headphones\",\n      \"price\": 2499000,\n      \"quantity\": 1\n    }\n  ],\n  \"shipping_address\": {\n    \"name\": \"Test User\",\n    \"phone\": \"081234567890\",\n    \"address_line\": \"Jl. Sudirman No. 1\",\n    \"city\": \"Jakarta\",\n    \"province\": \"DKI Jakarta\",\n    \"postal_code\": \"12190\",\n    \"notes\": \"Titip di pos satpam\"\n  },\n  \"payment_method\": \"bank_transfer\",\n  \"subtotal\": 2499000,\n  \"shipping_fee\": 25000,\n  \"total\": 2524000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{order_service}}/api/orders",
+              "host": ["{{order_service}}"],
+              "path": ["api", "orders"]
+            }
+          }
+        },
+        {
+          "name": "Get User Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{order_service}}/api/orders",
+              "host": ["{{order_service}}"],
+              "path": ["api", "orders"]
+            }
+          }
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{order_service}}/api/orders/ORD-EXAMPLE-ID",
+              "host": ["{{order_service}}"],
+              "path": ["api", "orders", "ORD-EXAMPLE-ID"]
+            }
+          }
+        },
+        {
+          "name": "Cancel Order",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{order_service}}/api/orders/ORD-EXAMPLE-ID/cancel",
+              "host": ["{{order_service}}"],
+              "path": ["api", "orders", "ORD-EXAMPLE-ID", "cancel"]
+            }
+          }
+        },
+        {
+          "name": "Update Order Status (Internal/Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"processing\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{order_service}}/api/orders/ORD-EXAMPLE-ID/status",
+              "host": ["{{order_service}}"],
+              "path": ["api", "orders", "ORD-EXAMPLE-ID", "status"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "user_service",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "product_service",
+      "value": "http://localhost:8001",
+      "type": "string"
+    },
+    {
+      "key": "order_service",
+      "value": "http://localhost:8002",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "ey...",
+      "type": "string"
+    }
+  ]
+}

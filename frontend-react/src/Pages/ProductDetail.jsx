@@ -16,7 +16,7 @@ const MOCK_PRODUCTS = {
 
 const ProductDetail = () => {
   const { id }         = useParams()
-  const { addItem, isInCart, updateQty, items } = useCart()
+  const { addItem } = useCart()
 
   const [product,  setProduct]  = useState(null)
   const [loading,  setLoading]  = useState(true)
@@ -53,8 +53,6 @@ const ProductDetail = () => {
       <Link to="/products" className="btn-primary">Back to Products</Link>
     </div>
   )
-
-  const inCart = isInCart(product.id)
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-fade-in">

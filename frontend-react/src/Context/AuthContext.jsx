@@ -19,7 +19,8 @@ export const AuthProvider = ({ children }) => {
     if (storedUser && token) {
       try {
         setUser(JSON.parse(storedUser))
-      } catch {
+      } catch (error) {
+        void error
         localStorage.removeItem('auth_token')
         localStorage.removeItem('auth_user')
         setToken(null)
@@ -64,7 +65,9 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(async () => {
     try {
       await authService.logout()
-    } catch (_) {}
+    } catch (error) {
+      void error
+    }
 
     localStorage.removeItem('auth_token')
     localStorage.removeItem('auth_user')

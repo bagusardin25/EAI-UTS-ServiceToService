@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { CheckCircle, AlertCircle, ChevronRight } from 'lucide-react'
 import { orderService } from '../services/api'
 import { useCart } from '../context/CartContext'
@@ -10,7 +10,6 @@ const STEPS = ['Address', 'Payment', 'Review']
 const Checkout = () => {
   const { items, totalPrice, clearCart, itemCount } = useCart()
   const { user }     = useAuth()
-  const navigate     = useNavigate()
 
   const [step,     setStep]     = useState(0)
   const [loading,  setLoading]  = useState(false)
@@ -53,31 +52,43 @@ const Checkout = () => {
   }
 
   const handleSubmit = async () => {
+    if (!user?.id) {
+      setError('User belum terdeteksi. Silakan login ulang.')
+      return
+    }
+
     setLoading(true)
     setError('')
     try {
       const orderPayload = {
+        user_id: user.id,
+        user_name: user.name,
+        user_email: user.email,
         items: items.map(i => ({
           product_id: i.id,
           name:       i.name,
           price:      i.price,
           quantity:   i.quantity,
         })),
-        shipping_address: address,
+        shipping_address: JSON.stringify(address),
+        notes: address.notes,
         payment_method:   payment,
         subtotal:         totalPrice,
         shipping_fee:     shipping,
         total:            grandTotal,
       }
       const res = await orderService.create(orderPayload)
-      setOrderId(res.data?.order_id || res.data?.id || 'ORD-' + Date.now())
+      const orderData = res.data?.data || res.data
+      setOrderId(orderData?.order_number || orderData?.id || 'ORD-' + Date.now())
       setSuccess(true)
       clearCart()
     } catch (err) {
-      // Simulate success for demo
-      setOrderId('ORD-' + Date.now())
-      setSuccess(true)
-      clearCart()
+      const message =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        'Gagal membuat order.'
+      setError(message)
     } finally {
       setLoading(false)
     }

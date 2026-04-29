@@ -74,6 +74,7 @@ export const productService = {
 export const orderService = {
   create: (data) => orderApi.post('/orders', data),
   getAll: () => orderApi.get('/orders'),
+  getByUserId: (userId) => orderApi.get(`/orders/user/${userId}`),
   getById: (id) => orderApi.get(`/orders/${id}`),
-  cancel: (id) => orderApi.patch(`/orders/${id}/cancel`),
+  updateStatus: (id, status) => orderApi.put(`/orders/${id}/status`, { status }),
 }
