@@ -71,7 +71,7 @@ const Home = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/85 to-stone-950/20" />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-stone-950 to-transparent" />
 
-        <div className="relative mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl grid-cols-1 items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_420px] lg:px-8">
+        <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl items-center px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-2xl reveal-up">
             <div className="mb-8 inline-flex items-center gap-2 border border-amber-400/30 bg-amber-400/15 px-3 py-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
@@ -108,25 +108,6 @@ const Home = () => {
                   <p className="mt-0.5 font-body text-xs uppercase tracking-wider text-stone-500">{stat.label}</p>
                 </div>
               ))}
-            </div>
-          </div>
-
-          <div className="hidden reveal-up lg:block" style={{ animationDelay: '160ms' }}>
-            <div className="surface float-soft p-5">
-              <div className="aspect-[4/5] overflow-hidden bg-stone-100">
-                <img
-                  src={heroImage}
-                  alt="Featured premium products"
-                  className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-                />
-              </div>
-              <div className="mt-5 flex items-center justify-between gap-4">
-                <div>
-                  <p className="font-body text-xs font-semibold uppercase tracking-widest text-stone-400">Today Pick</p>
-                  <p className="font-display text-xl font-semibold text-stone-900">Curated Essentials</p>
-                </div>
-                <span className="bg-stone-900 px-3 py-2 font-mono text-xs text-white">-15%</span>
-              </div>
             </div>
           </div>
         </div>
