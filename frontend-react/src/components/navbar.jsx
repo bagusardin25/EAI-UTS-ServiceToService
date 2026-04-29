@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { ShoppingBag, User, LogOut, Menu, X, Search, Package } from 'lucide-react'
-import { useAuth } from '../Context/AuthContext'
-import { useCart } from '../Context/CartContext'
+import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth()

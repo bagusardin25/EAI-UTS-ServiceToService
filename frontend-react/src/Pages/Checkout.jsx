@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { CheckCircle, AlertCircle, ChevronRight } from 'lucide-react'
 import { orderService } from '../services/api'
-import { useCart } from '../Context/CartContext'
-import { useAuth } from '../Context/AuthContext'
+import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 
 const STEPS = ['Address', 'Payment', 'Review']
 

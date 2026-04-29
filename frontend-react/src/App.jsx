@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { AuthProvider } from './Context/AuthContext'
-import { CartProvider } from './Context/CartContext'
+import { AuthProvider } from './context/AuthContext'
+import { CartProvider } from './context/CartContext'
 
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'

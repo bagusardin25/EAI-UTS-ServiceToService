@@ -49,7 +49,10 @@ const Home = () => {
     const fetchFeatured = async () => {
       try {
         const res = await productService.getAll({ limit: 8, featured: true })
-        setFeatured(res.data?.data || res.data || [])
+        // Handle paginated response from Laravel
+        const payload = res.data?.data
+        const items = Array.isArray(payload) ? payload : (payload?.data || [])
+        setFeatured(items)
       } catch {
         setFeatured(MOCK_PRODUCTS)
       } finally {

@@ -46,7 +46,14 @@ const Products = () => {
   // Fetch categories
   useEffect(() => {
     productService.getCategories()
-      .then(res => setCategories(res.data || MOCK_CATEGORIES))
+      .then(res => {
+        const cats = res.data?.data || res.data || []
+        // API returns objects {id, name, ...}, extract names for filter
+        const catNames = Array.isArray(cats)
+          ? cats.map(c => (typeof c === 'string' ? c : c.name))
+          : MOCK_CATEGORIES
+        setCategories(catNames)
+      })
       .catch(() => setCategories(MOCK_CATEGORIES))
   }, [])
 
@@ -62,7 +69,11 @@ const Products = () => {
       if (priceRange.max) params.max_price = priceRange.max
 
       const res = await productService.getAll(params)
-      setProducts(res.data?.data || res.data || [])
+      // Handle paginated response: res.data = {status, data: {data: [...], per_page, ...}}
+      // or non-paginated: res.data = {status, data: [...]}
+      const payload = res.data?.data
+      const items = Array.isArray(payload) ? payload : (payload?.data || [])
+      setProducts(items)
     } catch {
       // Filter mock products client-side for demo
       let filtered = [...MOCK_PRODUCTS]
