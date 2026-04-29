@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Eye, EyeOff, AlertCircle } from 'lucide-react'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../Context/AuthContext'
 
 const Login = () => {
   const { login } = useAuth()

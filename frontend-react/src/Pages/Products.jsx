@@ -7,8 +7,8 @@ import Loader from '../components/Loader'
 
 const SORT_OPTIONS = [
   { value: 'newest',    label: 'Newest First'    },
-  { value: 'price_asc', label: 'Price: Low → High'},
-  { value: 'price_desc',label: 'Price: High → Low'},
+  { value: 'price_asc', label: 'Price: Low to High'},
+  { value: 'price_desc',label: 'Price: High to Low'},
   { value: 'rating',    label: 'Top Rated'        },
 ]
 
@@ -97,13 +97,13 @@ const Products = () => {
   const hasFilters = activeSearch || category || priceRange.min || priceRange.max
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-fade-in">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 animate-fade-in">
 
       {/* Header */}
       <div className="mb-8">
         <h1 className="section-title mb-1">All Products</h1>
         <p className="font-body text-sm text-stone-400">
-          {loading ? 'Loading…' : `${products.length} products found`}
+          {loading ? 'Loading...' : `${products.length} products found`}
           {hasFilters && (
             <button onClick={clearFilters} className="ml-3 text-amber-600 hover:text-amber-700 underline">
               Clear filters
@@ -120,7 +120,7 @@ const Products = () => {
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search products…"
+            placeholder="Search products..."
             className="input-field pl-10 pr-10"
           />
           {search && (
@@ -132,7 +132,7 @@ const Products = () => {
         </form>
 
         {/* Sort */}
-        <div className="relative">
+        <div className="relative sm:w-56">
           <select
             value={sort}
             onChange={e => setSort(e.target.value)}
@@ -153,11 +153,11 @@ const Products = () => {
         </button>
       </div>
 
-      <div className="flex gap-8">
+      <div className="flex flex-col gap-6 sm:flex-row sm:gap-8">
 
         {/* ── Sidebar Filters ── */}
         <aside className={`${filterOpen ? 'block' : 'hidden'} sm:block w-full sm:w-60 flex-shrink-0`}>
-          <div className="bg-white border border-stone-100 p-5 space-y-6">
+          <div className="surface p-5 space-y-6 sm:sticky sm:top-24 reveal-up">
             <div>
               <h3 className="font-body text-xs font-semibold tracking-widest text-stone-500 uppercase mb-3">Category</h3>
               <ul className="space-y-1">
@@ -213,7 +213,7 @@ const Products = () => {
         {/* ── Product Grid ── */}
         <div className="flex-1 min-w-0">
           {loading ? (
-            <Loader text="Loading products…" />
+            <Loader text="Loading products..." />
           ) : products.length === 0 ? (
             <div className="text-center py-20">
               <p className="font-body text-stone-400 text-sm">No products found.</p>
@@ -221,7 +221,7 @@ const Products = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {products.map(p => <ProductCard key={p.id} product={p} />)}
+              {products.map((p, idx) => <ProductCard key={p.id} product={p} index={idx} />)}
             </div>
           )}
         </div>

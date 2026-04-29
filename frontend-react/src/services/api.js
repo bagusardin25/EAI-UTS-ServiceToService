@@ -3,9 +3,9 @@ import axios from 'axios'
 // ============================================================
 // BASE URLs — Microservices Architecture
 // ============================================================
-const USER_SERVICE_URL    = import.meta.env.VITE_USER_SERVICE_URL    || 'http://localhost:8000/api'
-const PRODUCT_SERVICE_URL = import.meta.env.VITE_PRODUCT_SERVICE_URL || 'http://localhost:8001/api'
-const ORDER_SERVICE_URL   = import.meta.env.VITE_ORDER_SERVICE_URL   || 'http://localhost:5000/api'
+const USER_SERVICE_URL    = import.meta.env.VITE_USER_SERVICE_URL    || 'http://localhost:8001/api'
+const PRODUCT_SERVICE_URL = import.meta.env.VITE_PRODUCT_SERVICE_URL || 'http://localhost:8000/api'
+const ORDER_SERVICE_URL   = import.meta.env.VITE_ORDER_SERVICE_URL   || 'http://localhost:8002/api'
 
 // ============================================================
 // AXIOS INSTANCES
