@@ -11,4 +11,4 @@ Route::get('/user', function (Request $request) {
 
 Route::apiResource('products', ProductController::class);
 Route::patch('products/{product}/stock', [ProductController::class, 'updateStock']);
-Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+Route::apiResource('categories', CategoryController::class);

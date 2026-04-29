@@ -23,11 +23,11 @@ class ProductFactory extends Factory
             'category_id' => Category::factory(),
             'name' => ucfirst($name),
             'slug' => Str::slug($name),
-            'description' => $this->faker->paragraph(),
-            'price' => $this->faker->randomFloat(2, 10000, 1000000),
-            'stock' => $this->faker->numberBetween(0, 100),
-            'sku' => strtoupper(Str::random(10)),
-            'image_url' => $this->faker->imageUrl(),
+            'description' => "Produk " . $name . " pilihan dengan kualitas terbaik untuk memenuhi kebutuhan Anda. Produk ini dirancang dengan material berkualitas dan tahan lama.",
+            'price' => $this->faker->randomFloat(0, 50000, 5000000), // Rentang harga 50rb - 5jt
+            'stock' => $this->faker->numberBetween(10, 200),
+            'sku' => strtoupper(Str::random(3)) . '-' . $this->faker->numberBetween(1000, 9999),
+            'image_url' => 'https://picsum.photos/400/400?random=' . $this->faker->numberBetween(1, 1000),
             'is_active' => true,
         ];
     }
