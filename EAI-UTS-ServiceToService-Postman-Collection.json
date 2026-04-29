@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "EAI-UTS-ServiceToService",
-    "description": "Postman collection for EAI UTS Project Microservices. Contains endpoints for User Service (8000), Product Service (8001), and Order Service (8002).",
+    "name": "EAI-UTS-ServiceToService (Admin & Buyer)",
+    "description": "Postman collection for EAI UTS Project Microservices. Memiliki endpoints lengkap untuk Role Admin dan Buyer di User Service (8000), Product Service (8001), dan Order Service (8002).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -9,128 +9,138 @@
       "name": "User Service (Port 8000)",
       "item": [
         {
-          "name": "Register",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+          "name": "Public / All Users",
+          "item": [
+            {
+              "name": "Register",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"buyer@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": { "raw": "{{user_service}}/api/register", "host": ["{{user_service}}"], "path": ["api", "register"] }
               }
             },
-            "url": {
-              "raw": "{{user_service}}/api/auth/register",
-              "host": ["{{user_service}}"],
-              "path": ["api", "auth", "register"]
-            }
-          }
-        },
-        {
-          "name": "Login",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+            {
+              "name": "Login",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"buyer@example.com\",\n  \"password\": \"password123\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": { "raw": "{{user_service}}/api/login", "host": ["{{user_service}}"], "path": ["api", "login"] }
               }
             },
-            "url": {
-              "raw": "{{user_service}}/api/auth/login",
-              "host": ["{{user_service}}"],
-              "path": ["api", "auth", "login"]
-            }
-          }
-        },
-        {
-          "name": "Get Profile",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{user_service}}/api/auth/profile",
-              "host": ["{{user_service}}"],
-              "path": ["api", "auth", "profile"]
-            }
-          }
-        },
-        {
-          "name": "Update Profile",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Test User Updated\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+            {
+              "name": "Get Own Profile",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{user_service}}/api/auth/profile", "host": ["{{user_service}}"], "path": ["api", "auth", "profile"] }
               }
             },
-            "url": {
-              "raw": "{{user_service}}/api/auth/profile",
-              "host": ["{{user_service}}"],
-              "path": ["api", "auth", "profile"]
+            {
+              "name": "Logout",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{user_service}}/api/logout", "host": ["{{user_service}}"], "path": ["api", "logout"] }
+              }
             }
-          }
+          ]
         },
         {
-          "name": "Logout",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
+          "name": "Admin Only",
+          "item": [
+            {
+              "name": "Get All Users",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{user_service}}/api/users", "host": ["{{user_service}}"], "path": ["api", "users"] }
               }
-            ],
-            "url": {
-              "raw": "{{user_service}}/api/auth/logout",
-              "host": ["{{user_service}}"],
-              "path": ["api", "auth", "logout"]
+            },
+            {
+              "name": "Create User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"New Admin\",\n  \"email\": \"admin2@example.com\",\n  \"password\": \"password\",\n  \"role\": \"admin\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": { "raw": "{{user_service}}/api/users", "host": ["{{user_service}}"], "path": ["api", "users"] }
+              }
+            },
+            {
+              "name": "Get User by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{user_service}}/api/users/1", "host": ["{{user_service}}"], "path": ["api", "users", "1"] }
+              }
+            },
+            {
+              "name": "Update User",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Updated Name\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": { "raw": "{{user_service}}/api/users/1", "host": ["{{user_service}}"], "path": ["api", "users", "1"] }
+              }
+            },
+            {
+              "name": "Delete User",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{user_service}}/api/users/1", "host": ["{{user_service}}"], "path": ["api", "users", "1"] }
+              }
+            },
+            {
+              "name": "Get User Orders History",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{user_service}}/api/users/1/orders", "host": ["{{user_service}}"], "path": ["api", "users", "1", "orders"] }
+              }
             }
-          }
+          ]
         }
       ]
     },
@@ -138,62 +148,145 @@
       "name": "Product Service (Port 8001)",
       "item": [
         {
-          "name": "Get All Products",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
+          "name": "Public / Buyers",
+          "item": [
+            {
+              "name": "Get All Products",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{product_service}}/api/products?page=1&limit=10",
+                  "host": ["{{product_service}}"],
+                  "path": ["api", "products"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "10" }
+                  ]
+                }
               }
-            ],
-            "url": {
-              "raw": "{{product_service}}/api/products?page=1&limit=10",
-              "host": ["{{product_service}}"],
-              "path": ["api", "products"],
-              "query": [
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "10" },
-                { "key": "category", "value": "elektronik", "disabled": true },
-                { "key": "q", "value": "headphone", "disabled": true },
-                { "key": "sort", "value": "price_asc", "disabled": true }
-              ]
+            },
+            {
+              "name": "Get Product by ID",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": { "raw": "{{product_service}}/api/products/1", "host": ["{{product_service}}"], "path": ["api", "products", "1"] }
+              }
+            },
+            {
+              "name": "Search Products",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{product_service}}/api/products/search?q=headphone",
+                  "host": ["{{product_service}}"],
+                  "path": ["api", "products", "search"],
+                  "query": [{ "key": "q", "value": "headphone" }]
+                }
+              }
+            },
+            {
+              "name": "Get Categories",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": { "raw": "{{product_service}}/api/categories", "host": ["{{product_service}}"], "path": ["api", "categories"] }
+              }
             }
-          }
+          ]
         },
         {
-          "name": "Get Product by ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
+          "name": "Admin Only",
+          "item": [
+            {
+              "name": "Create Product",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"New Product\",\n  \"price\": 150000,\n  \"stock\": 10,\n  \"category_id\": 1\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": { "raw": "{{product_service}}/api/products", "host": ["{{product_service}}"], "path": ["api", "products"] }
               }
-            ],
-            "url": {
-              "raw": "{{product_service}}/api/products/1",
-              "host": ["{{product_service}}"],
-              "path": ["api", "products", "1"]
-            }
-          }
-        },
-        {
-          "name": "Get Categories",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
+            },
+            {
+              "name": "Update Product",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"price\": 200000\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": { "raw": "{{product_service}}/api/products/1", "host": ["{{product_service}}"], "path": ["api", "products", "1"] }
               }
-            ],
-            "url": {
-              "raw": "{{product_service}}/api/categories",
-              "host": ["{{product_service}}"],
-              "path": ["api", "categories"]
+            },
+            {
+              "name": "Delete Product",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{product_service}}/api/products/1", "host": ["{{product_service}}"], "path": ["api", "products", "1"] }
+              }
+            },
+            {
+              "name": "Create Category",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Gadget Baru\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": { "raw": "{{product_service}}/api/categories", "host": ["{{product_service}}"], "path": ["api", "categories"] }
+              }
+            },
+            {
+              "name": "Update Category",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Gadget Terupdate\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": { "raw": "{{product_service}}/api/categories/1", "host": ["{{product_service}}"], "path": ["api", "categories", "1"] }
+              }
+            },
+            {
+              "name": "Delete Category",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{product_service}}/api/categories/1", "host": ["{{product_service}}"], "path": ["api", "categories", "1"] }
+              }
             }
-          }
+          ]
         }
       ]
     },
@@ -201,151 +294,120 @@
       "name": "Order Service (Port 8002)",
       "item": [
         {
-          "name": "Create Order",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"name\": \"Wireless Noise-Cancelling Headphones\",\n      \"price\": 2499000,\n      \"quantity\": 1\n    }\n  ],\n  \"shipping_address\": {\n    \"name\": \"Test User\",\n    \"phone\": \"081234567890\",\n    \"address_line\": \"Jl. Sudirman No. 1\",\n    \"city\": \"Jakarta\",\n    \"province\": \"DKI Jakarta\",\n    \"postal_code\": \"12190\",\n    \"notes\": \"Titip di pos satpam\"\n  },\n  \"payment_method\": \"bank_transfer\",\n  \"subtotal\": 2499000,\n  \"shipping_fee\": 25000,\n  \"total\": 2524000\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+          "name": "Buyers",
+          "item": [
+            {
+              "name": "Create Order (Checkout)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"name\": \"Wireless Noise-Cancelling Headphones\",\n      \"price\": 2499000,\n      \"quantity\": 1\n    }\n  ],\n  \"shipping_address\": {\n    \"name\": \"Test User\",\n    \"phone\": \"081234567890\",\n    \"address_line\": \"Jl. Sudirman No. 1\",\n    \"city\": \"Jakarta\",\n    \"province\": \"DKI Jakarta\",\n    \"postal_code\": \"12190\",\n    \"notes\": \"Titip di pos satpam\"\n  },\n  \"payment_method\": \"bank_transfer\",\n  \"subtotal\": 2499000,\n  \"shipping_fee\": 25000,\n  \"total\": 2524000\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": { "raw": "{{order_service}}/api/orders", "host": ["{{order_service}}"], "path": ["api", "orders"] }
               }
             },
-            "url": {
-              "raw": "{{order_service}}/api/orders",
-              "host": ["{{order_service}}"],
-              "path": ["api", "orders"]
-            }
-          }
-        },
-        {
-          "name": "Get User Orders",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{order_service}}/api/orders",
-              "host": ["{{order_service}}"],
-              "path": ["api", "orders"]
-            }
-          }
-        },
-        {
-          "name": "Get Order by ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{order_service}}/api/orders/ORD-EXAMPLE-ID",
-              "host": ["{{order_service}}"],
-              "path": ["api", "orders", "ORD-EXAMPLE-ID"]
-            }
-          }
-        },
-        {
-          "name": "Cancel Order",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{order_service}}/api/orders/ORD-EXAMPLE-ID/cancel",
-              "host": ["{{order_service}}"],
-              "path": ["api", "orders", "ORD-EXAMPLE-ID", "cancel"]
-            }
-          }
-        },
-        {
-          "name": "Update Order Status (Internal/Admin)",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"status\": \"processing\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+            {
+              "name": "Get Own Orders",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{order_service}}/api/orders", "host": ["{{order_service}}"], "path": ["api", "orders"] }
               }
             },
-            "url": {
-              "raw": "{{order_service}}/api/orders/ORD-EXAMPLE-ID/status",
-              "host": ["{{order_service}}"],
-              "path": ["api", "orders", "ORD-EXAMPLE-ID", "status"]
+            {
+              "name": "Get Own Order by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{order_service}}/api/orders/1", "host": ["{{order_service}}"], "path": ["api", "orders", "1"] }
+              }
+            },
+            {
+              "name": "Cancel Own Order",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{order_service}}/api/orders/1/cancel", "host": ["{{order_service}}"], "path": ["api", "orders", "1", "cancel"] }
+              }
             }
-          }
+          ]
+        },
+        {
+          "name": "Admin Only",
+          "item": [
+            {
+              "name": "Get ALL Orders (Global)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{order_service}}/api/orders/all", "host": ["{{order_service}}"], "path": ["api", "orders", "all"] }
+              }
+            },
+            {
+              "name": "Get Any Order by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{order_service}}/api/orders/1", "host": ["{{order_service}}"], "path": ["api", "orders", "1"] }
+              }
+            },
+            {
+              "name": "Update Order Status",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"shipped\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": { "raw": "{{order_service}}/api/orders/1/status", "host": ["{{order_service}}"], "path": ["api", "orders", "1", "status"] }
+              }
+            },
+            {
+              "name": "Get User's Orders",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": { "raw": "{{order_service}}/api/orders/user/1", "host": ["{{order_service}}"], "path": ["api", "orders", "user", "1"] }
+              }
+            }
+          ]
         }
       ]
     }
   ],
   "variable": [
-    {
-      "key": "user_service",
-      "value": "http://localhost:8000",
-      "type": "string"
-    },
-    {
-      "key": "product_service",
-      "value": "http://localhost:8001",
-      "type": "string"
-    },
-    {
-      "key": "order_service",
-      "value": "http://localhost:8002",
-      "type": "string"
-    },
-    {
-      "key": "token",
-      "value": "ey...",
-      "type": "string"
-    }
+    { "key": "user_service", "value": "http://localhost:8000", "type": "string" },
+    { "key": "product_service", "value": "http://localhost:8001", "type": "string" },
+    { "key": "order_service", "value": "http://localhost:8002", "type": "string" },
+    { "key": "token", "value": "ey...", "type": "string" }
   ]
 }

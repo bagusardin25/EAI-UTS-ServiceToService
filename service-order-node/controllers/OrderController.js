@@ -14,9 +14,6 @@ exports.create = async (req, res) => {
     const t = await db.transaction();
     try {
         const {
-            user_id,
-            user_name,
-            user_email,
             items,
             shipping_address,
             notes,
@@ -24,10 +21,15 @@ exports.create = async (req, res) => {
             total_amount: totalAmountFromClient,
         } = req.body;
 
+        // Ambil data user dari token yang sudah disahkan middleware
+        const user_id = req.user.id;
+        const user_name = req.user.name;
+        const user_email = req.user.email;
+
         // Validasi input dasar
-        if (!user_id || !items || !items.length) {
+        if (!items || !items.length) {
             await t.rollback();
-            return res.status(400).json({ message: 'user_id dan items wajib diisi' });
+            return res.status(400).json({ message: 'items pesanan wajib diisi' });
         }
 
         let total_amount = 0;
@@ -59,7 +61,7 @@ exports.create = async (req, res) => {
             user_id,
             user_name: user_name || null,
             user_email: user_email || null,
-            shipping_address,
+            shipping_address: typeof shipping_address === 'object' ? JSON.stringify(shipping_address) : shipping_address,
             status: 'pending',
             total_amount: finalTotalAmount,
             notes,
@@ -85,7 +87,12 @@ exports.create = async (req, res) => {
 // [PROVIDER] - Ambil semua order
 exports.getAll = async (req, res) => {
     try {
-        const orders = await Order.findAll({ include: 'items', order: [['created_at', 'DESC']] });
+        // Hanya tampilkan order milik user yang sedang login
+        const orders = await Order.findAll({ 
+            where: { user_id: req.user.id },
+            include: 'items', 
+            order: [['created_at', 'DESC']] 
+        });
         res.status(200).json({ message: 'Berhasil mengambil semua order', data: orders });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
@@ -98,6 +105,11 @@ exports.getById = async (req, res) => {
         const order = await Order.findByPk(req.params.id, { include: 'items' });
         if (!order) {
             return res.status(404).json({ message: 'Order tidak ditemukan' });
+        }
+        // Pastikan order ini milik user yang sedang login
+        // Gunakan toString() atau Number() karena database Sequelize pg mengembalikan BIGINT sebagai string
+        if (Number(order.user_id) !== Number(req.user.id)) {
+            return res.status(403).json({ message: 'Anda tidak memiliki akses ke order ini' });
         }
         res.status(200).json({ message: 'Berhasil mengambil order', data: order });
     } catch (error) {
