@@ -1,20 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserController;
+use Illuminate\Support\Facades\Route;
 
+// Auth Routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/auth/profile', function (Illuminate\Http\Request $request) {
-        return response()->json([
-            'message' => 'Profile retrieved successfully',
-            'data' => $request->user()
-        ]);
-    });
 
+// Semua user yang sudah login: admin dan buyer.
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/auth/profile', [UserController::class, 'profile']);
+    Route::put('/auth/profile', [UserController::class, 'updateProfile']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
+
+// Khusus admin.
+Route::middleware(['auth:sanctum', 'is_admin'])->group(function () {
     Route::get('/users', [UserController::class, 'index']);
     Route::post('/users', [UserController::class, 'store']);
     Route::get('/users/{id}', [UserController::class, 'show']);
