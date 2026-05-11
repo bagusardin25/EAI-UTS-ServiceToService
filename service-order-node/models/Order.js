@@ -10,7 +10,7 @@ const Order = db.define('orders', {
     shipping_address: { type: DataTypes.TEXT },
     status: {
         type: DataTypes.STRING(20), defaultValue: 'pending',
-        validate: { isIn: [['pending', 'paid', 'shipped', 'done', 'cancelled']] }
+        validate: { isIn: [['pending', 'processing', 'paid', 'shipped', 'done', 'cancelled']] }
     },
     total_amount: { type: DataTypes.DECIMAL(14, 2) },
     notes: { type: DataTypes.TEXT },

@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     default-mysql-client \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
+    supervisor \
+    dos2unix \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -42,7 +44,15 @@ RUN mkdir -p storage/framework/{sessions,views,cache/data} \
 
 # Copy and set entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN dos2unix /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Supervisor config for RabbitMQ consumer
+RUN echo "[program:rabbitmq-consumer]\n\
+command=php /var/www/html/artisan rabbitmq:consume-orders\n\
+autostart=true\n\
+autorestart=true\n\
+stderr_logfile=/var/log/rabbitmq-consumer.err.log\n\
+stdout_logfile=/var/log/rabbitmq-consumer.out.log" > /etc/supervisor/conf.d/rabbitmq-consumer.conf
 
 EXPOSE 8001
 

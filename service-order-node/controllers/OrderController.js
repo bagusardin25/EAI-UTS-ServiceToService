@@ -1,5 +1,7 @@
 const db = require('../config/database');
 const { Order, OrderItem } = require('../models');
+const rabbitmq = require('../services/rabbitmq');
+
 
 // Helper: generate order number (ORD-YYYYMMDD-XXXXX)
 function generateOrderNumber() {
@@ -73,6 +75,20 @@ exports.create = async (req, res) => {
         }
 
         await t.commit();
+
+        // Publish event to RabbitMQ
+        await rabbitmq.publish('eai_exchange', 'order.created', {
+            order_id: order.id,
+            user_id,
+            items: orderItems.map(item => ({
+                product_id: item.product_id,
+                quantity: item.quantity,
+                price: item.unit_price
+            })),
+            total_amount: finalTotalAmount,
+            timestamp: new Date().toISOString()
+        });
+
 
         // Fetch kembali dengan items
         const result = await Order.findByPk(order.id, { include: 'items' });

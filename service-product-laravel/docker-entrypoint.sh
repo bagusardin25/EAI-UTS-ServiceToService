@@ -31,5 +31,9 @@ echo "⚙️  Optimizing application..."
 php artisan config:clear
 php artisan route:clear
 
+# Start supervisor for RabbitMQ consumer
+echo "🐰 Starting RabbitMQ consumer..."
+supervisord -c /etc/supervisor/supervisord.conf
+
 echo "🚀 Starting Product Service on port 8001..."
 exec php artisan serve --host=0.0.0.0 --port=8001

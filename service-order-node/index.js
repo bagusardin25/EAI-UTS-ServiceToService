@@ -3,6 +3,9 @@ const express = require('express');
 const cors = require('cors');
 const db = require('./config/database');
 const apiRoutes = require('./routes/api');
+const rabbitmq = require('./services/rabbitmq');
+const { startStockConsumer } = require('./consumers/stockConsumer');
+
 
 const app = express();
 const PORT = process.env.PORT || 8002;
@@ -23,10 +26,26 @@ app.get('/', (req, res) => {
 db.sync({ alter: true })
     .then(() => {
         console.log('Database synced successfully');
+        
+        // Initialize RabbitMQ
+        return rabbitmq.connect();
+    })
+    .then(() => {
+        console.log('Starting RabbitMQ consumers...');
+        startStockConsumer();
+        
+
         app.listen(PORT, () => {
             console.log(`Order Service berjalan di port ${PORT}`);
         });
     })
     .catch((err) => {
-        console.error('Gagal sync database:', err);
+        console.error('Gagal startup:', err);
     });
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+    await rabbitmq.close();
+    process.exit(0);
+});
+
