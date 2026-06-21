@@ -1,0 +1,22 @@
+{
+  "name": "service-payment-hasura",
+  "version": "1.0.0",
+  "description": "Payment Service with Apollo Server (Manual GraphQL) & Hasura",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.11.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "graphql": "^16.11.0",
+    "pg": "^8.16.0",
+    "sequelize": "^6.37.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
