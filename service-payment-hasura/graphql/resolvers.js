@@ -1,3 +1,4 @@
+const axios = require('axios');
 const { Payment, PaymentMethod } = require('../models');
 
 /**
@@ -89,7 +90,7 @@ const resolvers = {
         },
 
         // Update status pembayaran
-        updatePaymentStatus: async (_, { id, status }) => {
+        updatePaymentStatus: async (_, { id, status }, context) => {
             const payment = await Payment.findByPk(id);
             if (!payment) {
                 throw new Error(`Payment dengan ID ${id} tidak ditemukan`);
@@ -105,6 +106,27 @@ const resolvers = {
             // Set paid_at jika status berubah ke 'paid'
             if (status === 'paid') {
                 payment.paid_at = new Date();
+                
+                // Terintegrasi dengan Order Service: Update status order menjadi 'paid'
+                try {
+                    const orderServiceUrl = process.env.ORDER_SERVICE_URL || 'http://localhost:8002/api';
+                    const authHeader = context?.headers?.authorization || context?.headers?.Authorization;
+                    
+                    if (authHeader) {
+                        console.log(`Mengirim update status 'paid' untuk Order ID ${payment.order_id} ke Order Service...`);
+                        await axios.put(`${orderServiceUrl}/orders/${payment.order_id}/status`, {
+                            status: 'paid'
+                        }, {
+                            headers: { Authorization: authHeader }
+                        });
+                        console.log(`Berhasil update status order ${payment.order_id} menjadi 'paid'`);
+                    } else {
+                        console.warn(`Peringatan: Tidak ada header Authorization. Gagal update status Order ID ${payment.order_id} di Order Service.`);
+                    }
+                } catch (error) {
+                    console.error(`Gagal integrasi dengan Order Service untuk Order ID ${payment.order_id}:`, error.message);
+                    // Kita tidak me-throw error agar payment tetap tersimpan meskipun integrasi order gagal
+                }
             }
 
             await payment.save();
