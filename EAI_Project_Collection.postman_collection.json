@@ -93,7 +93,7 @@
           "response": []
         },
         {
-          "name": "Get User Orders",
+          "name": "Get User Orders (Admin Only)",
           "request": {
             "method": "GET",
             "header": [
@@ -198,10 +198,16 @@
           "name": "Update Stock",
           "request": {
             "method": "PATCH",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"quantity\": 10,\n    \"type\": \"addition\"\n}",
+              "raw": "{\n    \"quantity\": 10,\n    \"type\": \"add\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -304,7 +310,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"status\": \"completed\"\n}",
+              "raw": "{\n    \"status\": \"paid\"\n}",
               "options": {
                 "raw": {
                   "language": "json"

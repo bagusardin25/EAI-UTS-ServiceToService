@@ -197,6 +197,8 @@ Setiap layanan memiliki dokumentasi API terpisah yang dapat diakses melalui taut
 1. 👤 **User Service:** [Postman Documentation - User Service](https://documenter.getpostman.com/view/50538090/2sBXqJLM9J)
 2. 📦 **Product Service:** [Postman Documentation - Product Service](https://documenter.getpostman.com/view/48836995/2sBXqJKg6v)
 3. 🛒 **Order Service:** [Postman Documentation - Order Service](https://documenter.getpostman.com/view/48788436/2sBXqJLMDi)
+4. 💳 **Payment Service:** GraphQL Playground di `http://localhost:8003/graphql` (Apollo Server) dan `http://localhost:8080/console` (Hasura)
+5. 📋 **Koleksi Terintegrasi:** `EAI_Project_Collection.postman_collection.json` (import ke Postman)
 
 ---
 
