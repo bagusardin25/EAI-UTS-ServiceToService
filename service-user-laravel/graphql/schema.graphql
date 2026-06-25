@@ -42,6 +42,9 @@ type Mutation {
         password: String! @rules(apply: ["required", "string"])
     ): AuthPayload!
 
+    "Logout — cabut SEMUA token Sanctum user (logout dari semua device). True jika sukses."
+    logout: Boolean! @guard(with: ["sanctum"])
+
     "Buat user baru (admin only)."
     createUser(
         name: String! @rules(apply: ["required", "string", "max:100"])
