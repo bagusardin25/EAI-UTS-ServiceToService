@@ -35,6 +35,17 @@ class User extends Authenticatable
     }
 
     /**
+     * ISO 8601 representation of the creation timestamp.
+     *
+     * Exposed to GraphQL via the `created_at` field (`@method`) so the output
+     * format stays identical to the previous rebing implementation.
+     */
+    public function createdAtIso(): ?string
+    {
+        return $this->created_at?->toIso8601String();
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>

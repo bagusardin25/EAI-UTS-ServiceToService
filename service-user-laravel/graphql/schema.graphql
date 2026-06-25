@@ -1,0 +1,115 @@
+"""
+User Service GraphQL schema (Lighthouse / schema-first).
+
+Berjalan berdampingan dengan REST API. Auth memakai guard Sanctum (token sama
+dengan REST). Otorisasi per-field:
+  - @guard(with: ["sanctum"]) : wajib terautentikasi
+  - @admin                    : wajib role = admin (custom directive)
+  - login                     : publik (tanpa directive auth)
+"""
+
+type Query {
+    "User yang sedang login (dari Bearer token)."
+    me: User @guard(with: ["sanctum"]) @auth(guard: "sanctum")
+
+    "Daftar user dengan filter opsional (admin only)."
+    users(
+        "Filter sebagian pada name atau email."
+        search: String
+        "Filter berdasarkan role (admin / user)."
+        role: String
+        "Jumlah maksimum baris (default 25, maks 100)."
+        limit: Int
+    ): [User!]! @guard(with: ["sanctum"]) @admin
+
+    "Ambil satu user berdasarkan id (admin only)."
+    user(id: Int!): User @guard(with: ["sanctum"]) @admin
+}
+
+type Mutation {
+    "Registrasi akun baru (publik). Role selalu \"user\". Kembalikan token Sanctum."
+    register(
+        name: String! @rules(apply: ["required", "string", "max:100"])
+        email: String! @rules(apply: ["required", "email", "max:150", "unique:users,email"])
+        password: String! @rules(apply: ["required", "string", "min:8"])
+        phone: String @rules(apply: ["nullable", "string", "max:20"])
+        address: String @rules(apply: ["nullable", "string"])
+    ): AuthPayload!
+
+    "Login dengan email + password, kembalikan token Sanctum (publik)."
+    login(
+        email: String! @rules(apply: ["required", "email"])
+        password: String! @rules(apply: ["required", "string"])
+    ): AuthPayload!
+
+    "Buat user baru (admin only)."
+    createUser(
+        name: String! @rules(apply: ["required", "string", "max:100"])
+        email: String! @rules(apply: ["required", "email", "max:150", "unique:users,email"])
+        password: String! @rules(apply: ["required", "string", "min:8"])
+        role: String @rules(apply: ["nullable", "in:admin,user"])
+        phone: String @rules(apply: ["nullable", "string", "max:20"])
+        address: String @rules(apply: ["nullable", "string"])
+        is_active: Boolean
+    ): User! @guard(with: ["sanctum"]) @admin
+
+    "Update user (admin only). Field bersifat opsional."
+    updateUser(
+        id: Int! @rules(apply: ["required", "integer", "exists:users,id"])
+        name: String @rules(apply: ["sometimes", "string", "max:100"])
+        email: String @rules(apply: ["sometimes", "email", "max:150"])
+        password: String @rules(apply: ["sometimes", "string", "min:8"])
+        role: String @rules(apply: ["sometimes", "in:admin,user"])
+        phone: String @rules(apply: ["sometimes", "nullable", "string", "max:20"])
+        address: String @rules(apply: ["sometimes", "nullable", "string"])
+        is_active: Boolean
+    ): User
+        @guard(with: ["sanctum"])
+        @admin
+        @validator(class: "App\\GraphQL\\Validators\\UpdateUserValidator")
+
+    "Hapus user berdasarkan id (admin only). True jika sukses."
+    deleteUser(
+        id: Int! @rules(apply: ["required", "integer", "exists:users,id"])
+    ): Boolean! @guard(with: ["sanctum"]) @admin
+}
+
+type User {
+    "Primary key user."
+    id: Int!
+    "Nama lengkap user."
+    name: String!
+    "Alamat email unik."
+    email: String!
+    "Role user (admin atau user)."
+    role: String
+    "Nomor telepon."
+    phone: String
+    "Alamat bebas (free-text)."
+    address: String
+    "Apakah akun aktif."
+    is_active: Boolean
+    "Alamat terstruktur (shipping/billing). Di-batch-load otomatis (anti N+1)."
+    addresses: [UserAddress!]! @hasMany(relation: "userAddresses")
+    "Timestamp pembuatan (ISO 8601)."
+    created_at: String @method(name: "createdAtIso")
+}
+
+type UserAddress {
+    id: Int!
+    label: String
+    street: String
+    city: String
+    province: String
+    postal_code: String
+    is_primary: Boolean
+}
+
+type AuthPayload {
+    "Bearer token Sanctum untuk request berikutnya."
+    access_token: String!
+    "Selalu \"Bearer\"."
+    token_type: String!
+    "User yang terautentikasi."
+    user: User!
+}
